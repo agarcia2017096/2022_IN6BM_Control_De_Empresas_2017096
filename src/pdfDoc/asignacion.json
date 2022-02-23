@@ -1,0 +1,30 @@
+[
+     {
+        "_id": "620dcf1c4b85157d9db501d7",
+        "nombre": "Alejandro",
+        "apellido": "Garcia",
+        "email": "agarcia-2017096@kinal.com",
+        "rol": "ROL_ALUMNO",
+        "idCurso": "620dd013bb957a8ae92ffa22",
+        "nombreCurso": "Taller"
+    },
+    {
+        "_id": "620dcf1c4b85157d9db501d7",
+        "nombre": "Alejandro",
+        "apellido": "Garcia",
+        "email": "agarcia-2017096@kinal.com",
+        "rol": "ROL_ALUMNO",
+        "idCurso": "620dd022bb957a8ae92ffa28",
+        "nombreCurso": "Matematicas I"
+    },
+    {
+        "_id": "620dcf1c4b85157d9db501d7",
+        "nombre": "Alejandro",
+        "apellido": "Garcia",
+        "email": "agarcia-2017096@kinal.com",
+        "rol": "ROL_ALUMNO",
+        "idCurso": "620dab9170e7f6649fb893b8",
+        "nombreCurso": "Ingles"
+    }
+  
+]
