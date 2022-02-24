@@ -64,7 +64,7 @@ function Login(req, res) {
 
         } else {
             return res.status(500)
-                .send({ mensaje: 'Error, el correo no se encuentra registrado.'})
+                .send({ mensaje: 'Error, el correo no se encuentra registrado. Verifique los datos'})
         }
                 })
         }

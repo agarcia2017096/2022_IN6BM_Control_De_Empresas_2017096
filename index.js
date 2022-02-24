@@ -19,8 +19,7 @@ mongoose.connect('mongodb://localhost:27017/IN6BM2_CONTROL_EMPRESA_2017096',{use
 //********************** 1. REGISTRAR ADMINISTRADOR POR DEFECTO ************** */
 function RegistrarAdministradorDefault(req, res) {
 
-
-    Usuarios.findOne({email:"ADMIN"}, (err, AdministradorEncontrados) => {
+    Usuarios.findOne({email:"Admin"}, (err, AdministradorEncontrados) => {
         if(!AdministradorEncontrados==null){
             console.log('El administrador ya se encuentra registrado')
         }
@@ -29,17 +28,15 @@ function RegistrarAdministradorDefault(req, res) {
 
         if(!AdministradorEncontrados){
             //Agregar por defecto
-
-            var parametros = req.body;
             var usuarioModel = new Usuarios();
-                usuarioModel.nombre = "ADMIN";
-                   usuarioModel.apellido = "ADMIN";
+                usuarioModel.nombre = "Admin";
+                   usuarioModel.apellido = "Admin";
                    usuarioModel.password = "123456";
-                    usuarioModel.email = "ADMIN";
+                    usuarioModel.email = "Admin";
                     usuarioModel.rol = 'ROL_ADMINISTRADOR';
                     usuarioModel.imagen = null;
         
-                    Usuarios.find({ email: "ADMIN"}, (err, usuarioEncontrado) => {
+                    Usuarios.find({ email: "Admin"}, (err, usuarioEncontrado) => {
                         if ( usuarioEncontrado.length == 0 ) {
         
                             bcrypt.hash("123456", null, null, (err, passwordEncriptada) => {
@@ -54,11 +51,9 @@ function RegistrarAdministradorDefault(req, res) {
                             });                    
                         }
                     })        
-            //      
         }else {
             console.log('El usuario por defecto ya está registrado' );
         }
 
     })
-
 }

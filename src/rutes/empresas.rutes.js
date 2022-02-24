@@ -10,31 +10,18 @@ var api = express.Router();
  //********************************* USUARIOS ********************************* */
  //EDITAR PROPIO PERFIL DE EMPRESA
 api.put('/editarPerfilEmpresa',md_autentificacion.Auth,empresasController.EditarPerfilEmpresa)
-module.exports = api
- //********************************* EMPRESAS ********************************* */
+
+ //******************* CRUD EMPRESAS - FUNCIONES ADMINISTRADOR ****************** */
 //REGISTRAR EMPRESAS
-api.post('/registrarEmpresas',md_autentificacion.Auth, usuariosController.RegistrarEmpresas);
+api.post('/registrarEmpresas',md_autentificacion.Auth, empresasController.RegistrarEmpresas);
 
 //EDITAR EMPRESAS
-api.put('/editarEmpresas/:idEmpresa',md_autentificacion.Auth, usuariosController.EditarEmpresas);
-
-
+api.put('/editarEmpresas/:idEmpresa',md_autentificacion.Auth, empresasController.EditarEmpresas);
 
 //OBTENER LAS EMPRESAS DEL ADMINISTRADOR
-api.get('/obtenerEmpresasAdministrador', md_autentificacion.Auth, usuariosController.ObtenerEmpresasAdministrador);
+api.get('/obtenerEmpresasAdministrador', md_autentificacion.Auth, empresasController.ObtenerEmpresasAdministrador);
 
+//ELIMINAR EMPRESAS
+api.delete('/eliminiarEmpresa', md_autentificacion.Auth, empresasController.EliminarEmpresa);
 
-
-//OBTENER LA CATIDAD DE EMPLEADOS POR EMPRESA
-//api.get('/usuarios',empresasController.ObtenerUsuarios)
-//BUSCAR POR ID
-//api.get('/empleadoID/:nombreEmpleado',empresasController.ObtenerNombreUsuarios)
-//BUSCAR POR NOMBRE
-//api.get('/empleadoNombre/:nombreUsuario',empresasController.ObtenerNombreUsuarios)
-//BUSCAR POR PUESTO
-//api.get('/empleadoPuesto/:apellidoUsuario',empresasController.ObtenerApellidoUsuarios)
-//BUSCAR POR DEPARTAMENTO
-//api.get('/empleadoDepartamento/:emailUsuario',empresasController.ObtenerEmailUsuarios)
-//BUSCAR TODOS LOS EMPLEADOS
-//BUSCAR POR DEPARTAMENTO
-//api.get('/empleadoDepartamento/:emailUsuario',usuariosController.ObtenerEmailUsuarios)
+module.exports = api

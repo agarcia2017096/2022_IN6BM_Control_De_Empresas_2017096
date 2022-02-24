@@ -7,8 +7,7 @@ const md_autentificacion = require('../middlewares/autentication')
 //RUTAS
 var api = express.Router();
 
-//LOGIN 
+//LOGIN DE LA APLICACIÓN 
 api.post('/login', usuariosController.Login);
-
 
 module.exports = api
