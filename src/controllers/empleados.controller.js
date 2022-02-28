@@ -33,7 +33,7 @@ function AgregarEmpleados(req, res){
                             if(!empleadoGuardado) return res.status(500).send({ mensaje: "Error al guardar el curso"});
                             
                             return res.status(200).send({ empleado: empleadoGuardado });
-                        });
+                        })
                     } else {
                         return res.status(500)
                             .send({ mensaje: 'Este telefono, ya  se encuentra registrado. Utilice otro' });
@@ -87,7 +87,7 @@ function EditarEmpleados(req, res){
                                         
                                         return res.status(200).send({empleado : empleadoActualizado})
                         
-                                    })
+                                    }).populate("idEmpresa","nombreEmpresa actividadEconomica")
 
                         }else{
                             return res.status(500)
@@ -107,7 +107,7 @@ function EditarEmpleados(req, res){
                                                 
                                                 return res.status(200).send({empleado : empleadoActualizado})
                                 
-                                            })
+                                            }).populate("idEmpresa","nombreEmpresa actividadEconomica")
         
                                 }else{
                                     return res.status(500)
@@ -123,7 +123,7 @@ function EditarEmpleados(req, res){
                                         .send({ mensaje: 'Error al editar el Usuario'});
                                     
                                     return res.status(200).send({empleado : empleadoActualizado})
-                                })
+                                }).populate("idEmpresa","nombreEmpresa actividadEconomica")
                         }
                     }
                 } else{
@@ -181,59 +181,70 @@ function CantidadEmpleadosActuales (req,res){
 function ObtenerUsuarioID(req, res){
     var idEmp =req.params.idEmpleado;
 
-    Empleados.findById(idEmp,{idEmpresa:req.user.sub},(err,empleadoEncontrado)=>{
+    if ( req.user.rol != "ROL_EMPRESA" ) return res.status(500)
+    .send({ mensaje: 'No tiene acceso a buscar empleados. Solamente la empresa puede hacerlo'});
 
-        if(err) return res.status(500).send({mensaje: "El empleado no existe. Verifique el ID"})
-
-        if(!empleadoEncontrado)return res.status(404).send({mensaje: "Este usuario no existe en la empresa"})
-
+    Empleados.findOne({_id:idEmp,idEmpresa: req.user.sub},(err,empleadoEncontrado)=>{
+        if(err) return res.status(500).send({mensaje: "El empleado no existe. Error en la peticion. Verifique el ID"})
+        if(!empleadoEncontrado) return res.status(500).send({mensaje: "El empleado no existe en la empresa. Verifique el ID"})
+        console.log(empleadoEncontrado)
         return res.status(200).send({empleado: empleadoEncontrado})
-    })
+
+    }).populate("idEmpresa","nombreEmpresa actividadEconomica")
 }
 
 //BUSCAR POR NOMBRE DE USUARIO
 function ObtenerNombreEmpleados(req, res) {
     var nombrEmp= req.params.nombreEmpleado;
 
+    if ( req.user.rol != "ROL_EMPRESA" ) return res.status(500)
+    .send({ mensaje: 'No tiene acceso a buscar empleados. Solamente la empresa puede hacerlo'});
+
     Empleados.find({ nombre : { $regex: nombrEmp, $options: 'i' },idEmpresa:req.user.sub },(err, empleadoEncontrado)=>{
-        if(err)return res.status(500).send({mensaje: "Error, nose ha podido reolver la consulta"});
-        if(!empleadoEncontrado)return res.status(404).send({mensaje: "Este nombre no existe en la empresa"});
+        console.log(empleadoEncontrado)
+        if(err)return res.status(500).send({mensaje: "El empleado no existe en la empresa. Verifique el nombre "});
+
+        if(empleadoEncontrado.length==0) return res.status(404).send({mensaje: "No existen empleados con este nombre en la empresa"});
+
         return res.status(200).send({empleado: empleadoEncontrado})
-    })
+    }).populate("idEmpresa","nombreEmpresa actividadEconomica")
 }
 
 //BUSCAR POR PUESTO DE EMPLEADO
 function ObtenerPuestoEmpleados(req, res) {
     var puestoEmp= req.params.puestoEmpleado;
 
-    Empleados.find({ puesto : { $regex: apellidoUser, $options: 'i' },idEmpresa:req.user.sub },(err, empleadoEncontrado)=>{
-        if(err)return res.status(500).send({mensaje: "Error en la peticion"});
-        if(!empleadoEncontrado)return res.status(404).send({mensaje: "Error, el usuario no existe"});
+    if ( req.user.rol != "ROL_EMPRESA" ) return res.status(500)
+    .send({ mensaje: 'No tiene acceso a buscar empleados. Solamente la empresa puede hacerlo'});
+
+    Empleados.find({ puesto : { $regex: puestoEmp, $options: 'i' },idEmpresa:req.user.sub },(err, empleadoEncontrado)=>{
+        if(err)return res.status(500).send({mensaje: "El empleado no existe en la empresa. Verifique el puesto "});
+        if(empleadoEncontrado.length==0)return res.status(404).send({mensaje: "No existen empleados con este puesto en la empresa"});
         return res.status(200).send({empleado: empleadoEncontrado})
-    })
+    }).populate("idEmpresa","nombreEmpresa actividadEconomica")
 }
 
 
 //BUSCAR POR DEPARTAMENTO DE EMPLEADO
 function ObtenerDepartamentoEmpleados(req, res) {
-    var emailUser= req.params.emailUsuario;
+    var deptoEmpleado= req.params.departamentoEmpleado;
 
-    Empleados.find({ departamento : { $regex: emailUser, $options: 'i' },idEmpresa:req.user.sub },(err, empleadoEncontrado)=>{
-        if(err)return res.status(500).send({mensaje: "Error en la peticion"});
-        if(!empleadoEncontrado)return res.status(404).send({mensaje: "Error, el usuario no existe"});
+    Empleados.find({ departamento : { $regex: deptoEmpleado, $options: 'i' },idEmpresa:req.user.sub },(err, empleadoEncontrado)=>{
+        if(err)return res.status(500).send({mensaje: "El empleado no existe en la empresa. Verifique el departamento "});
+        if(empleadoEncontrado.length==0)return res.status(404).send({mensaje: "No existen empleados con este departamento en la empresa"});
         return res.status(200).send({empleado: empleadoEncontrado})
-    })
+    }).populate("idEmpresa","nombreEmpresa actividadEconomica")
 }
 
 //BUSCAR TODOS LOS EMPLEADOS DE LA EMPRESA
 function ObtenerTodosEmpleados(req, res) {
     var emailUser= req.params.emailUsuario;
 
-    Empleados.find({},{idEmpresa:req.user.sub },(err, empleadoEncontrado)=>{
+    Empleados.find({idEmpresa:req.user.sub },(err, empleadoEncontrado)=>{
         if(err)return res.status(500).send({mensaje: "Error en la peticion"});
         if(!empleadoEncontrado)return res.status(404).send({mensaje: "Error, el usuario no existe"});
         return res.status(200).send({empleado: empleadoEncontrado})
-    })
+    }).populate("idEmpresa","nombreEmpresa actividadEconomica")
 }
 
 //********************************* EXPORTAR ********************************* */
@@ -245,7 +256,11 @@ module.exports ={
     EliminarEmpleados,
     EditarEmpleados,
     CantidadEmpleadosActuales,
-    ObtenerUsuarioID
+    ObtenerUsuarioID,
+    ObtenerNombreEmpleados,
+    ObtenerPuestoEmpleados,
+    ObtenerDepartamentoEmpleados,
+    ObtenerTodosEmpleados
     
     
 

@@ -11,7 +11,7 @@ const jwt = require('../services/jwt');
 function RegistrarEmpresas(req, res) {
 
     if ( req.user.rol == "ROL_EMPRESA" ) return res.status(500)
-    .send({ mensaje: 'No tiene acceso a registar Empresas'});
+    .send({ mensaje: 'No tiene acceso a registar Empresas. Únicamente el Administrador'});
 
     var parametros = req.body;
     var empresasModel = new Empresas();
@@ -56,7 +56,7 @@ function EditarEmpresas(req, res) {
     var parametros = req.body;
 
     if ( req.user.rol == "ROL_EMPRESA" ) return res.status(500)
-    .send({ mensaje: 'No tiene acceso a editar empresas'});
+    .send({ mensaje: 'No tiene acceso a editar empresas. Únicamente el Administrador'});
 
     Empresas.findById(idEmp, (err,buscarEmpleado)=>{
         if(!buscarEmpleado)return res.status(404).send( { mensaje: 'La empresa no existe, verifique el ID'});
@@ -82,7 +82,7 @@ function EditarEmpresas(req, res) {
 function ObtenerEmpresasAdministrador(req, res) {
 
     if ( req.user.rol == "ROL_EMPRESA" ) return res.status(500)
-    .send({ mensaje: 'No tiene acceso a buscar empresas'});
+    .send({ mensaje: 'No tiene acceso a buscar empresas. Únicamente el Administrador'});
 
     Empresas.find({idEmpresa:req.user.sub}, (err, empresasEncontradas) => {
         if(err) return res.status(500).send({ mensaje: "Error en la peticion" });

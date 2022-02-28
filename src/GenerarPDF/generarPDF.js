@@ -1,7 +1,9 @@
+//ALEJANDRO JAVIER GARCIA GARCIA -2017096 - PE6BM2
+/*
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
-const Empresa = require("../models/empresa.model");
-const Empleado = require("../models/empleado.model");
+const Empresa = require("../models/empresas.model");
+const Empleado = require("../models/empleados.model");
 const imagen = "./src/picture/tienda-de-aplicaciones.png"
 
 
@@ -82,7 +84,6 @@ function generateCustomerInformation(doc, empresa) {
   generateHr(doc, 252);
 }
 
-/****************** Inconcluso   ******************/ 
 function generateInvoiceTable(doc, empleados) {
     let i;
     const invoiceTableTop = 330;
@@ -166,4 +167,4 @@ function formatDate(date) {
 
 module.exports = {
   empresaGenerar
-};
+};*/

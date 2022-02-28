@@ -19,20 +19,18 @@ api.delete('/eliminarEmpleados/:idEmpleado',md_autentificacion.Auth,empleadosCon
 
 //OBTENER LA CATIDAD DE EMPLEADOS POR EMPRESA
 api.get('/empleadosActualesCantidad',md_autentificacion.Auth,empleadosController.CantidadEmpleadosActuales)
-//BUSCAR POR ID
-api.get('/empleadosId/:idEmpleado',empleadosController.ObtenerUsuarioID)
 
+//BUSQUEDA DE EMPLEADOS
 //BUSCAR POR ID
-//api.get('/empleadoID/:nombreEmpleado',empresasController.ObtenerNombreUsuarios)
+api.get('/empleadosId/:idEmpleado',md_autentificacion.Auth, empleadosController.ObtenerUsuarioID)
 //BUSCAR POR NOMBRE
-//api.get('/empleadoNombre/:nombreUsuario',empresasController.ObtenerNombreUsuarios)
+api.get('/empleadosNombre/:nombreEmpleado',md_autentificacion.Auth,empleadosController.ObtenerNombreEmpleados)
 //BUSCAR POR PUESTO
-//api.get('/empleadoPuesto/:apellidoUsuario',empresasController.ObtenerApellidoUsuarios)
+api.get('/empleadosPuesto/:puestoEmpleado',md_autentificacion.Auth,empleadosController.ObtenerPuestoEmpleados)
 //BUSCAR POR DEPARTAMENTO
-//api.get('/empleadoDepartamento/:emailUsuario',empresasController.ObtenerEmailUsuarios)
+api.get('/empleadosDepartamento/:departamentoEmpleado',md_autentificacion.Auth,empleadosController.ObtenerDepartamentoEmpleados)
 //BUSCAR TODOS LOS EMPLEADOS
-//BUSCAR POR DEPARTAMENTO
-//api.get('/empleadoDepartamento/:emailUsuario',usuariosController.ObtenerEmailUsuarios)
+api.get('/empleradosActualesTodos',md_autentificacion.Auth,empleadosController.ObtenerTodosEmpleados)
 
 
 module.exports = api
