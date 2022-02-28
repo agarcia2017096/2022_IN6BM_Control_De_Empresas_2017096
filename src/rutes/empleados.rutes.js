@@ -18,9 +18,10 @@ api.put('/editarEmpleados/:idEmpleado',md_autentificacion.Auth,empleadosControll
 api.delete('/eliminarEmpleados/:idEmpleado',md_autentificacion.Auth,empleadosController.EliminarEmpleados)
 
 //OBTENER LA CATIDAD DE EMPLEADOS POR EMPRESA
+api.get('/empleadosActualesCantidad',md_autentificacion.Auth,empleadosController.CantidadEmpleadosActuales)
+//BUSCAR POR ID
+api.get('/empleadosId/:idEmpleado',empleadosController.ObtenerUsuarioID)
 
-//OBTENER LA CATIDAD DE EMPLEADOS POR EMPRESA
-//api.get('/usuarios',empresasController.ObtenerUsuarios)
 //BUSCAR POR ID
 //api.get('/empleadoID/:nombreEmpleado',empresasController.ObtenerNombreUsuarios)
 //BUSCAR POR NOMBRE

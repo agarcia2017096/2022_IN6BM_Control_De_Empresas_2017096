@@ -134,37 +134,40 @@ function EditarEmpleados(req, res){
 }
 
 //********************************* 2.3. ELIMINAR EMPLEADO ********************************* */
-function EliminarEmpleados(req,re){
+function EliminarEmpleados(req,res){
     var idEmp = req.params.idEmpleado
+
     if ( req.user.rol != "ROL_EMPRESA" ) return res.status(500)
-    .send({ mensaje: 'No tiene acceso a editar empleados. Solamente la empresa puede hacerlo'});
+    .send({ mensaje: 'No tiene acceso a eliminar empleados. Solamente la empresa puede hacerlo'});
 
     Empleados.findOne({_id:idEmp,idEmpresa:req.user.sub}, (err, empleadoEncontrado) => {
-        if(err) return res.status(404).send({ mensaje:"El empleado no existe. Verifique el ID"})
-        if(!empleadoEncontrado){
-            return res.send({ mensaje:"Unicamente puede editar empleados de su empresa"})
-        }else{
-            Empleados.findByIdAndDelete(idEmp, (err, empleadoEliminado)=>{
-                if(err) return res.status(404).send({mensaje: "Error en la peticion"})
-                if(err) return res.status(500).send({mensaje: "Error al eliminar"})
- 
-               return res.status(200).send({empleado:empleadoEliminado})
- 
-            })
+        if(err) return res.status(500).send({ mensaje:"El empleado no existe. Verifique el ID"})
 
+        if(!empleadoEncontrado){
+            return res.status(500).send({ mensaje:"Unicamente puede eliminar empleados de su empresa"})
+        }else{
+           Empleados.findByIdAndDelete(idEmp, (err, empleadoEliminado)=>{
+               if(err) return res.status(404).send({mensaje: "Error en la peticion"})
+               if(!empleadoEliminado) return res.status(500).send({mensaje: "Error al eliminar"})
+
+              return res.status(200).send({empleado:empleadoEliminado})
+
+           })
         }
     })
-
 }
 
 //3. Se tendrá que llevar control del personal laborando por empresa
 //actualmente y la cantidad de los mismos por empresa.
 //********************************* 3.1. BUSCAR CANTIDAD DE EMPLEADOS DE LA EMPRESA ********************************* */
-function EmpleadosActuales (req,res){
+function CantidadEmpleadosActuales (req,res){
     
-    Empleados.find({},{idEmpresa:req.user.sub},(err,empleadosEcontrados)=>{
+    if ( req.user.rol != "ROL_EMPRESA" ) return res.status(500)
+    .send({ mensaje: 'No tiene acceso a buscar empleados. Solamente la empresa puede hacerlo'});
+
+    Empleados.find({idEmpresa:req.user.sub},(err,empleadosEcontrados)=>{
         if(err) return res.status(404).send({mensaje:"Error en la peticion"})
-        if(!usuariosObtenidos){
+        if(!empleadosEcontrados){
             return res.status(500).send({mensaje:"No existen empleados de su empresa"})
 
         }else{
@@ -178,9 +181,9 @@ function EmpleadosActuales (req,res){
 function ObtenerUsuarioID(req, res){
     var idEmp =req.params.idEmpleado;
 
-    Empleados.find({_id:idEmp,idEmpresa:req.user.sub},(err,empleadoEncontrado)=>{
+    Empleados.findById(idEmp,{idEmpresa:req.user.sub},(err,empleadoEncontrado)=>{
 
-        if(err) return res.status(500).send({mensaje: "Error en la peticion"})
+        if(err) return res.status(500).send({mensaje: "El empleado no existe. Verifique el ID"})
 
         if(!empleadoEncontrado)return res.status(404).send({mensaje: "Este usuario no existe en la empresa"})
 
@@ -241,7 +244,9 @@ module.exports ={
     EditarEmpleados,
     EliminarEmpleados,
     EditarEmpleados,
-    EmpleadosActuales,
+    CantidadEmpleadosActuales,
+    ObtenerUsuarioID
+    
     
 
 }

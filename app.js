@@ -27,17 +27,35 @@ module.exports = app;
 
 
 
+/*const fs = require('fs');
+ const Pdfmake = require('pdfmake');
+  function generarPDF() { var fonts = { Roboto: { normal: '/fonts/roboto/Roboto-Regular.ttf', bold: '/fonts/roboto/Roboto-Medium.ttf', italics: '/fonts/roboto/Roboto-Italic.ttf', bolditalics: '/fonts/roboto/Roboto-MediumItalic.ttf' } };
+   let pdfmake = new Pdfmake(fonts); let contenido = [{ text: 'Titulo', }] 
+   Empleado.find({idEmpresa: usuarioLogueado}, (err, empleadoEncontrado) => { 
+       if(err) return res.status(500) .send({ mensaje: 'Error en la peticion' 
+    });
+    for (let i = 0; i < empleadoEncontrado.length ; i++) {
+        content.push({ text:'empleado '+i+' '+empleadoEncontrado[i].nombre+' '+empleadoEncontrado[i].apellido, }) 
+    }
+     })
+      let docDefinition = {
+           content: contenido 
+        } let pdfDoc = pdfmake.createPdfKitDocument(docDefinition, {});
+
+pdfDoc.pipe(fs.createWriteStream('.reporte.pdf''));
+pdfDoc.end();*/
+
 
 
 //////////////////////////////// CÓDIGO PDF ////////////////////////////////
 //Fuente:https://www.youtube.com/watch?v=VR8Q43bJfwc
-const fs = require("fs");
+/*const fs = require("fs");
 const PDFDocument = require("./src/pdfDoc/pdf-kit");
 
-const asignaciones = require("./src/pdfDoc/asignacion.json");
+const asignaciones = require("./src/pdfDoc/asignacion.json");*/
 
 // Creacion de documento
-const doc = new PDFDocument();
+/*const doc = new PDFDocument();
 
 doc.pipe(fs.createWriteStream(`asignaciones.pdf`));
 
@@ -62,4 +80,4 @@ for (const asig of asignaciones) {
 
 doc.moveDown().table(table, 10, 125, { width: 590 });
 
-doc.end();
+doc.end();*/

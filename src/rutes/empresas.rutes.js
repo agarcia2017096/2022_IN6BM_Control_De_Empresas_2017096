@@ -3,6 +3,8 @@
 const express = require('express');
 const empresasController = require('../controllers/empresas.controller')
 const md_autentificacion = require('../middlewares/autentication')
+const pdfController = require('../GenerarPDF/generarPDF')
+
 
 //RUTAS
 var api = express.Router();
@@ -23,5 +25,9 @@ api.get('/obtenerEmpresasAdministrador', md_autentificacion.Auth, empresasContro
 
 //ELIMINAR EMPRESAS
 api.delete('/eliminiarEmpresa', md_autentificacion.Auth, empresasController.EliminarEmpresa);
+
+
+//GENERACIÓN DE PDF POR EMPRESA Y VERIFICACIÓN DE TOKEN
+api.get("/generaraPDF",md_autenticacion.autenticacion,crearPDF.empresaGenerar)
 
 module.exports = api
