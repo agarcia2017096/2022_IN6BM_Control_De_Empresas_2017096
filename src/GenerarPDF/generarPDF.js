@@ -4,7 +4,7 @@ const fs = require("fs");
 const PDFDocument = require("pdfkit");
 const Empresas = require("../models/empresas.model");
 const Empleados = require("../models/empleados.model");
-const imagen = "./src/GenerarPDF/LCS KINAL.png"
+const imagen = "./src/GenerarPDF/images/LCS KINAL.png"
 
 
 function empresasPDF(req, res){
@@ -25,8 +25,8 @@ function empresasPDF(req, res){
             if(empleadosEncontrados === null) return res.status(404)
             .send({error: `Error al entrar al empleado`})
             
-            createInvoice(empresaEncontrada,empleadosEncontrados, path);
-            return res.status(200).send({empresa: "El PDf de la empresa se ha creado exitosamente"})
+            estructuraDocumento(empresaEncontrada,empleadosEncontrados, path);
+            return res.status(200).send({empresa: "El PDf de la empresa "+ nombreDoc +" se ha creado exitosamente"})
           })
       }
     })
@@ -35,11 +35,11 @@ function empresasPDF(req, res){
 }
 
 
-function createInvoice(empresa,empleados, path) {
+function estructuraDocumento(empresa,empleados, path) {
   let doc = new PDFDocument({ size: "A4", margin: 20 });
-  generateHeader(doc,empresa);
-  generateCustomerInformation(doc, empresa);
-  generateInvoiceTable(doc, empleados);
+  cabeceraDocumento(doc,empresa);
+  informacionEmpresa(doc, empresa);
+  encabezadoTabla(doc, empleados);
   generateFooter(doc);
 
   doc.end();
@@ -47,17 +47,15 @@ function createInvoice(empresa,empleados, path) {
 }
 
 
-function generateHeader(doc,empresa) {
+function cabeceraDocumento(doc,empresa) {
   empresa.forEach(element=>{
     doc
+    .image("./src/GenerarPDF/images/FondoDocumentoPDF.png",2,2, { width: 591,height: 837, align: "center"})
      .image(imagen, 70, 45, { width: 60 })
     .fillColor("#212F3C")
-    .fontSize(30)
+    .fontSize(9)
     .font('Helvetica-BoldOblique')
-    //.text(element.empresa, 110, 57)
-    .fontSize(10)
-    .font('Times-Roman')
-    .text(formatDate(new Date()), 220, 50, { align: "right" })
+    .text(fechaDocumento(new Date()), 220, 40, { align: "right" })
     .text("Control de Empresas", 220, 90, { align: "right" })
     .text("Alejandro García - 2017096", 220, 110, { align: "right" })
     .text(" PE6BM2", 220, 130, { align: "right" })
@@ -67,46 +65,51 @@ function generateHeader(doc,empresa) {
   })
 }
 
-function generateCustomerInformation(doc, empresa) {
+function informacionEmpresa(doc, empresa) {
   doc
-    .fillColor("#444444")
-    .fontSize(24)
-    .font('Times-Roman')
-    .text("Registro de Empleados", 175, 60),{ align: "center" };
+    .fillColor("#B03A2E")
+    .fontSize(34)
+    .font('Courier-BoldOblique')
+    .text("Registro de", 22, 50,{ align: "center" })
+    .text("Empleados", 22, 95,{ align: "center" });
 
-  generateHr(doc, 155);
+  separadorEmpresa(doc, 170);
 
-  const informacionPrimaria = 168;
   empresa.forEach(element=>{
     doc
+    .fillColor("#273746")
       .fontSize(10)
       .font("Helvetica-Bold")
-      .text("Empresa:", 70, informacionPrimaria)
+      .text("ID:", 70, 180)
       .font("Helvetica")
-      .text(element.nombreEmpresa, 190, informacionPrimaria)
+      .text(element._id, 190, 180)
       .font("Helvetica-Bold")
-      .text("Actividad Economica:", 70, informacionPrimaria + 15)
+      .text("Empresa:", 70, 200)
       .font("Helvetica")
-      .text(element.actividadEconomica, 190, informacionPrimaria + 15)
+      .text(element.nombreEmpresa, 190, 200)
       .font("Helvetica-Bold")
-      .text("Email:", 70, informacionPrimaria + 30)
+      .text("Actividad Economica:", 70, 220)
       .font("Helvetica")
-      .text(element.email,190,informacionPrimaria + 30)
-      .image("./src/GenerarPDF/IconoEMpresa.png", 475, 157, { width: 60, align: "right"})
+      .text(element.actividadEconomica, 190, 220)
+      .font("Helvetica-Bold")
+      .text("Email:", 70, 240)
+      .font("Helvetica")
+      .text(element.email,190,240)
+      .image("./src/GenerarPDF/images/IconoEMpresa.png", 475, 180, { width: 70, align: "right"})
       .moveDown();
   })
 
-  generateHr(doc, 220);
+  separadorEmpresa(doc, 258);
 }
 
-function generateInvoiceTable ( doc, empleados) {
+function encabezadoTabla ( doc, empleados) {
     let i;
-    const invoiceTableTop = 250;
+    const invoiceTableTop = 300;
 
-    doc.font("Helvetica-Bold")
+    doc.font("Helvetica-BoldOblique")
        .fontSize(15)
-       .fillColor("#154360");
-       generateTableRow(
+       .fillColor("#1F618D");
+       filaRegistro(
       doc,
       invoiceTableTop,
       "Nombre",
@@ -116,16 +119,16 @@ function generateInvoiceTable ( doc, empleados) {
       "Departamento",
       "Puesto"
       );
-    generateHr(doc, invoiceTableTop + 20);
+      separadorSubtitulos(doc, invoiceTableTop + 20);
     doc.font("Helvetica")
        .fontSize(10)
        .fillColor("black");
 
         for (i = 0; i < empleados.length; i++) {
           const item = empleados[i];
-          const position = invoiceTableTop + (i + 1) * 30;
+          const position = invoiceTableTop + (i + 1) * 50;
     
-          generateTableRow(
+          filaRegistro(
             doc,
             position,
             item.nombre,
@@ -136,30 +139,30 @@ function generateInvoiceTable ( doc, empleados) {
             item.puesto
           );
     
-          generateHr(doc, position + 20);
+          separadorRegistros(doc, position + 30);
         }
-
-
 
 }
 
 function generateFooter(doc) {
   doc
-    .image("./src/GenerarPDF/LLS KINAL.png", 20, 750, { width: 70, align: "left"})
-    .fontSize(10)
-    .font("Helvetica")
+    .image("./src/GenerarPDF/images/LLS KINAL.png", 35, 770, { width: 70, align: "left"})
+    .fontSize(11)
+    .font("Helvetica-Bold")
     .text(
       "Sexto Perito en Informática - Ciclo Diversificado 2022",
       50,
-      760,
+      785,
       { align: "center", width: 500 }
     )
-    .text("Ciudad de Guatemala", 50, 780, { align: "center" })
-    .image("./src/GenerarPDF/LLS KINAL.png", 480, 750, { width: 70, align: "right"})
+    .font("Helvetica-Oblique")
+    .fillColor("#1C2833")
+    .text("Ciudad de Guatemala", 50, 800, { align: "center" })
+    .image("./src/GenerarPDF/images/LLS KINAL.png", 490, 770, { width: 70, align: "right"})
 
 }
 
-function generateTableRow(
+function filaRegistro(
   doc,
   y,
   nombre,
@@ -179,16 +182,34 @@ function generateTableRow(
     .text(puesto, 506, y)
 }
 
-function generateHr(doc, y) {
+function separadorEmpresa(doc, y) {
   doc
-    .strokeColor("#1C2833")
+    .strokeColor("#154360")
     .lineWidth(1)
     .moveTo(15, y)
     .lineTo(580, y)
     .stroke();
 }
 
-function formatDate(date) {
+function separadorSubtitulos(doc, y) {
+  doc
+    .strokeColor("#17202A")
+    .lineWidth(2)
+    .moveTo(15, y)
+    .lineTo(580, y)
+    .stroke();
+}
+
+function separadorRegistros(doc, y) {
+  doc
+    .strokeColor("#B2BABB")
+    .lineWidth(0.5)
+    .moveTo(15, y)
+    .lineTo(580, y)
+    .stroke();
+}
+
+function fechaDocumento(date) {
   
   const day = date.getDate();
   const month = date.getMonth() + 1;
