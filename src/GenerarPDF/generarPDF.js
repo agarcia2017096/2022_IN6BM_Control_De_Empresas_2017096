@@ -1,38 +1,42 @@
 //ALEJANDRO JAVIER GARCIA GARCIA -2017096 - PE6BM2
-/*
+
 const fs = require("fs");
 const PDFDocument = require("pdfkit");
-const Empresa = require("../models/empresas.model");
-const Empleado = require("../models/empleados.model");
-const imagen = "./src/picture/tienda-de-aplicaciones.png"
+const Empresas = require("../models/empresas.model");
+const Empleados = require("../models/empleados.model");
+const imagen = "./src/GenerarPDF/LCS KINAL.png"
 
 
-function empresaGenerar(req, res){
-  
-  Empresa.find({empresa:req.user.empresa },(err, empresaEncontrada)=>{
-    if(err) return res.status(500).send({ error: `Error en la peticion ${err}`})
-    if(empresaEncontrada !== null){
-        var nombreDoc;
-        empresaEncontrada.forEach(element=>{
-          nombreDoc= element.empresa;
-        })
-        // ruta
-        var path = "./src/docPDF/"+nombreDoc+".pdf";
-        Empleado.find({empresa: req.user.empresa},(err, empleadosEncontrados)=>{
-          if(err) return res.status(500).send({ error: `Error en la peticion ${err}`})
-          if(empleadosEncontrados === null) return res.status(404)
-          .send({error: `Error al entrar al empleado`})
-          
-          createInvoice(empresaEncontrada,empleadosEncontrados, path);
-          return res.status(200).send({empresa: "pdf generado"})
-        })
-    }
+function empresasPDF(req, res){
+  if ( req.user.rol == "ROL_ADMINISTRADOR" ) return res.status(500)
+  .send({ mensaje: 'No tiene acceso a generar PDF de empresas. Únicamente el cada empresa puede hacerlo'});
+
+
+  Empresas.findOne({_id:req.user.sub},(err,nombreIdEncontrado)=>{
+    Empresas.find({_id:req.user.sub },(err, empresaEncontrada)=>{
+      if(err) return res.status(500).send({ error: `Error en la peticion ${err}`})
+      if(empresaEncontrada !== null){
+          var nombreDoc=nombreIdEncontrado.nombreEmpresa;
+
+          // DIRECCIONAMIENTO
+          var path = "./src/docPDF/"+nombreDoc+".pdf";
+          Empleados.find({idEmpresa: req.user.sub},(err, empleadosEncontrados)=>{
+            if(err) return res.status(500).send({ error: `Error en la peticion ${err}`})
+            if(empleadosEncontrados === null) return res.status(404)
+            .send({error: `Error al entrar al empleado`})
+            
+            createInvoice(empresaEncontrada,empleadosEncontrados, path);
+            return res.status(200).send({empresa: "El PDf de la empresa se ha creado exitosamente"})
+          })
+      }
+    })
   })
+
 }
 
 
 function createInvoice(empresa,empleados, path) {
-  let doc = new PDFDocument({ size: "A4", margin: 50 });
+  let doc = new PDFDocument({ size: "A4", margin: 20 });
   generateHeader(doc,empresa);
   generateCustomerInformation(doc, empresa);
   generateInvoiceTable(doc, empleados);
@@ -46,15 +50,19 @@ function createInvoice(empresa,empleados, path) {
 function generateHeader(doc,empresa) {
   empresa.forEach(element=>{
     doc
-    .image(imagen, 30, 45, { width: 70 })
-    .fillColor("#444444")
+     .image(imagen, 70, 45, { width: 60 })
+    .fillColor("#212F3C")
     .fontSize(30)
     .font('Helvetica-BoldOblique')
-    .text(element.empresa, 110, 57)
+    //.text(element.empresa, 110, 57)
     .fontSize(10)
     .font('Times-Roman')
-    .text(formatDate(new Date()), 200, 50, { align: "right" })
-    .text("Cd. Guatemala", 200, 65, { align: "right" })
+    .text(formatDate(new Date()), 220, 50, { align: "right" })
+    .text("Control de Empresas", 220, 90, { align: "right" })
+    .text("Alejandro García - 2017096", 220, 110, { align: "right" })
+    .text(" PE6BM2", 220, 130, { align: "right" })
+
+
     .moveDown();
   })
 }
@@ -62,40 +70,49 @@ function generateHeader(doc,empresa) {
 function generateCustomerInformation(doc, empresa) {
   doc
     .fillColor("#444444")
-    .fontSize(20)
-    .text("Registro De Empleados", 50, 160);
+    .fontSize(24)
+    .font('Times-Roman')
+    .text("Registro de Empleados", 175, 60),{ align: "center" };
 
-  generateHr(doc, 185);
+  generateHr(doc, 155);
 
-  const customerInformationTop = 200;
+  const informacionPrimaria = 168;
   empresa.forEach(element=>{
     doc
-      .fontSize(12)
-      .text("Empresa:", 50, customerInformationTop)
+      .fontSize(10)
+      .font("Helvetica-Bold")
+      .text("Empresa:", 70, informacionPrimaria)
       .font("Helvetica")
-      .text(element.empresa, 150, customerInformationTop)
-      .text("Direccion:", 50, customerInformationTop + 15)
-      .text(element.direccion, 150, customerInformationTop + 15)
-      .text("Web:", 50, customerInformationTop + 30)
-      .text(element.empresa+".com",150,customerInformationTop + 30)
+      .text(element.nombreEmpresa, 190, informacionPrimaria)
+      .font("Helvetica-Bold")
+      .text("Actividad Economica:", 70, informacionPrimaria + 15)
+      .font("Helvetica")
+      .text(element.actividadEconomica, 190, informacionPrimaria + 15)
+      .font("Helvetica-Bold")
+      .text("Email:", 70, informacionPrimaria + 30)
+      .font("Helvetica")
+      .text(element.email,190,informacionPrimaria + 30)
+      .image("./src/GenerarPDF/IconoEMpresa.png", 475, 157, { width: 60, align: "right"})
       .moveDown();
   })
 
-  generateHr(doc, 252);
+  generateHr(doc, 220);
 }
 
-function generateInvoiceTable(doc, empleados) {
+function generateInvoiceTable ( doc, empleados) {
     let i;
-    const invoiceTableTop = 330;
+    const invoiceTableTop = 250;
 
     doc.font("Helvetica-Bold")
        .fontSize(15)
-       .fillColor("#0x06327D");
-    generateTableRow(
+       .fillColor("#154360");
+       generateTableRow(
       doc,
       invoiceTableTop,
       "Nombre",
       "Apellido",
+      "Email",
+      "Telefono",
       "Departamento",
       "Puesto"
       );
@@ -104,31 +121,42 @@ function generateInvoiceTable(doc, empleados) {
        .fontSize(10)
        .fillColor("black");
 
-    for (i = 0; i < empleados.length; i++) {
-      const item = empleados[i];
-      const position = invoiceTableTop + (i + 1) * 30;
-      generateTableRow(
-        doc,
-        position,
-        item.nombre,
-        item.apellido,
-        item.departamento,
-        item.puesto
-      );
+        for (i = 0; i < empleados.length; i++) {
+          const item = empleados[i];
+          const position = invoiceTableTop + (i + 1) * 30;
+    
+          generateTableRow(
+            doc,
+            position,
+            item.nombre,
+            item.apellido,
+            item.email,
+            item.telefono,
+            item.departamento,
+            item.puesto
+          );
+    
+          generateHr(doc, position + 20);
+        }
 
-      generateHr(doc, position + 20);
-    }
+
+
 }
 
 function generateFooter(doc) {
   doc
+    .image("./src/GenerarPDF/LLS KINAL.png", 20, 750, { width: 70, align: "left"})
     .fontSize(10)
+    .font("Helvetica")
     .text(
-      "Carlos Josué Levy Aceituno Pocasangre - 2017478 - IN6BM1",
+      "Sexto Perito en Informática - Ciclo Diversificado 2022",
       50,
-      780,
+      760,
       { align: "center", width: 500 }
-    );
+    )
+    .text("Ciudad de Guatemala", 50, 780, { align: "center" })
+    .image("./src/GenerarPDF/LLS KINAL.png", 480, 750, { width: 70, align: "right"})
+
 }
 
 function generateTableRow(
@@ -136,35 +164,40 @@ function generateTableRow(
   y,
   nombre,
   apellido,
+  email,
+  telefono,
   departamento,
   puesto
 ) {
   doc
     .fontSize(10)
-    .text(nombre, 70, y)
-    .text(apellido, 190, y)
-    .text(departamento, 290, y, { width: 90, align: "center" })
-    .text(puesto, 430, y, { width: 90, align: "center" })
+    .text(nombre, 25, y)
+    .text(apellido, 95, y)
+    .text(email, 160, y)
+    .text(telefono, 315, y)
+    .text(departamento, 390, y)
+    .text(puesto, 506, y)
 }
 
 function generateHr(doc, y) {
   doc
-    .strokeColor("#0x365B6D")
+    .strokeColor("#1C2833")
     .lineWidth(1)
-    .moveTo(50, y)
-    .lineTo(550, y)
+    .moveTo(15, y)
+    .lineTo(580, y)
     .stroke();
 }
 
 function formatDate(date) {
+  
   const day = date.getDate();
   const month = date.getMonth() + 1;
   const year = date.getFullYear();
 
-  return year + "/" + month + "/" + day;
+  return day + "/" + month + "/" + year;
 
 }
 
 module.exports = {
-  empresaGenerar
-};*/
+  empresasPDF
+};

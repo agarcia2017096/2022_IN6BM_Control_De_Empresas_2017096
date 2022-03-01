@@ -24,10 +24,10 @@ api.put('/editarEmpresas/:idEmpresa',md_autentificacion.Auth, empresasController
 api.get('/obtenerEmpresasAdministrador', md_autentificacion.Auth, empresasController.ObtenerEmpresasAdministrador);
 
 //ELIMINAR EMPRESAS
-api.delete('/eliminiarEmpresa/idEmpresa', md_autentificacion.Auth, empresasController.EliminarEmpresa);
+api.delete('/eliminarEmpresas/:idEmpresa', md_autentificacion.Auth, empresasController.EliminarEmpresa);
 
 
 //GENERACIÓN DE PDF POR EMPRESA Y VERIFICACIÓN DE TOKEN
-//api.get("/generaraPDF",md_autenticacion.autenticacion,crearPDF.empresaGenerar)
+api.get("/generaraPDF",md_autentificacion.Auth,pdfController.empresasPDF)
 
 module.exports = api

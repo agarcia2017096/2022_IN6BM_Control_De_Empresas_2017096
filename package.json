@@ -1,13 +1,13 @@
 {
-  "name": "laboratorio_2_practica_supervisada_2017096",
+  "name": "Laboratorio_Control_Empresas",
   "version": "1.0.0",
-  "description": "Laboratorio 2 - 2017096",
+  "description": "Control_De_Empresas - 2017096",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
-  "author": "Alejandro Garcia",
+  "author": "Alejandro Javier Garcia Garcia",
   "license": "ISC",
   "dependencies": {
     "bcrypt-nodejs": "^0.0.3",

@@ -94,32 +94,44 @@ function ObtenerEmpresasAdministrador(req, res) {
 //********************************* 4. ELIMINAR EMPRESA ********************************* */
 function EliminarEmpresa(req, res){
     const idEmp = req.params.idEmpresa;
+    console.log("Hola")
 
-    Cursos.findOne({_id:idEmp,idUsuario:req.user.sub},(err,empresaEncontrada)=>{
-        if(err) return res.status(400).send({mensaje:'Error en la peticion'})
-        if(!empresaEncontrada) return res.status(500).send({mensaje:"No puede eliminar un curso que no creado por su usuario"})
+    if ( req.user.rol == "ROL_EMPRESA" ) return res.status(500)
+    .send({ mensaje: 'No tiene acceso a buscar empresas. Únicamente el Administrador'});
 
-         Cursos.findOne({nombreEmpresa:"KINAL - POR DEFECTO"},(err,empresaEncontrado)=>{
-            if(err) return res.status(400).send({mensaje:'Error en la peticion de buscar curso por defecto'})
-            if(!empresaEncontrado){
+    Empresas.findOne({_id:idEmp},(err,empresaExistente)=>{
+        if(err) return res.status(404).send({mensaje:'Error, la empresa no existe. Verifique el ID'})
+        if(empresaExistente.length==0) return res.status(500).send({mensaje:"La empresa no existe"})
+
+        Empresas.findOne({nombreEmpresa:"KINAL - POR DEFECTO"},(err,empresaEncontrada)=>{
+            if(err) return res.status(400).send({mensaje:'Error en la peticion de buscar empresa por defecto'})
+            if(!empresaEncontrada){
                const modeloEmpresa = new Empresas()
                modeloEmpresa.nombreEmpresa = "KINAL - POR DEFECTO"
                modeloEmpresa.actividadEconomica = "Educación"
                modeloEmpresa.email = "fundacionkinal@kinal.edu.gt"
                modeloEmpresa.rol = "ROL_EMPRESA"
+               modeloEmpresa.email = "fundacionkinal@kinal.edu.gt"
+               modeloEmpresa.rol = "ROL_EMPRESA"
+               modeloEmpresa.password = "123456"
+
+               bcrypt.hash("123456", null, null, (err, passwordEncriptada) => {
+                modeloEmpresa.password = passwordEncriptada;
+
+                }); 
 
 
-              modeloCurso.save((err,empresaGuardada)=>{
+                modeloEmpresa.save((err,empresaGuardada)=>{
                    if(err) return res.status(400).send({mensaje:'Error en la peticion de guardar la empresa por defecto'})
                    if(!empresaGuardada) return res.status(400).send({mensaje:'No se ha podido agregar la empresa'})
 
-                  Empleados.updateMany({idCurso:idCurso},{idCurso:cursoGuardado.id},(err,asignacionesActualizadas)=>{
+                  Empleados.updateMany({idEmpresa:idEmp},{idEmpresa:empresaGuardada.id},(err,empleadosActualizados)=>{
                     if(err) return res.status(400).send({mensaje:'Error en la peticion de actualizar '})
 
-                    Cursos.findByIdAndDelete(cursoId,(err,cursoEliminado)=>{
+                    Empresas.findByIdAndDelete(cursoId,(err,empresaEliminada)=>{
                         if(err) return res.status(400).send({mensaje:'Error en la peticion al eliminar '})
-                        if(!cursoEliminado) return res.status(400).send({mensaje:'No se ha podido eliminar el curso'})
-                        return res.status(200).send({editado:asignacionesActualizadas,curso:cursoEliminado})
+                        if(!empresaEliminada) return res.status(400).send({mensaje:'No se ha podido eliminar el empresa'})
+                        return res.status(200).send({editado:empleadosActualizados,empresa:empresaEliminada})
 
                     })
 
@@ -128,12 +140,12 @@ function EliminarEmpresa(req, res){
                })
 
             }else{
-            Asignaciones.updateMany({idCurso:cursoId},{idCurso:cursoEncontrado._id},(err,asignacionesEncontradas)=>{
+            Empleados.updateMany({idEmpresa:idEmp},{idEmpresa:empresaEncontrada._id},(err,empresaEncontrada)=>{
                 if(err) return res.status(400).send({mensaje:'Error en la peticion de actualizar '})
-                Cursos.findByIdAndDelete(cursoId,(err,cursoEliminado)=>{
+                Empresas.findByIdAndDelete(idEmp,(err,empresaEliminada)=>{
                     if(err) return res.status(400).send({mensaje:'Error en la peticion al eliminar '})
-                    if(!cursoEliminado) return res.status(400).send({mensaje:'No se ha podido eliminar el curso'})
-                    return res.status(200).send({editado:asignacionesActualizadas,curso:cursoEliminado})
+                    if(!empresaEliminada) return res.status(400).send({mensaje:'No se ha podido eliminar el curso'})
+                    return res.status(200).send({editado:empresaEncontrada,curso:empresaEliminada})
                 })
             })
 
