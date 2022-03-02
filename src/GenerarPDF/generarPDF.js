@@ -4,7 +4,7 @@ const fs = require("fs");
 const PDFDocument = require("pdfkit");
 const Empresas = require("../models/empresas.model");
 const Empleados = require("../models/empleados.model");
-const imagen = "./src/GenerarPDF/images/LCS KINAL.png"
+const imagen = "./src/generarPDF/images/LCS KINAL.png"
 
 
 function empresasPDF(req, res){
@@ -50,7 +50,7 @@ function estructuraDocumento(empresa,empleados, path) {
 function cabeceraDocumento(doc,empresa) {
   empresa.forEach(element=>{
     doc
-    .image("./src/GenerarPDF/images/FondoDocumentoPDF.png",2,2, { width: 591,height: 837, align: "center"})
+    .image("./src/generarPDF/images/FondoDocumentoPDF.png",2,2, { width: 591,height: 837, align: "center"})
      .image(imagen, 70, 45, { width: 60 })
     .fillColor("#212F3C")
     .fontSize(9)
@@ -95,7 +95,7 @@ function informacionEmpresa(doc, empresa) {
       .text("Email:", 70, 240)
       .font("Helvetica")
       .text(element.email,190,240)
-      .image("./src/GenerarPDF/images/IconoEMpresa.png", 475, 180, { width: 70, align: "right"})
+      .image("./src/generarPDF/images/IconoEMpresa.png", 475, 180, { width: 70, align: "right"})
       .moveDown();
   })
 
@@ -146,7 +146,7 @@ function encabezadoTabla ( doc, empleados) {
 
 function generateFooter(doc) {
   doc
-    .image("./src/GenerarPDF/images/LLS KINAL.png", 35, 770, { width: 70, align: "left"})
+    .image("./src/generarPDF/images/LLS KINAL.png", 35, 770, { width: 70, align: "left"})
     .fontSize(11)
     .font("Helvetica-Bold")
     .text(
@@ -158,7 +158,7 @@ function generateFooter(doc) {
     .font("Helvetica-Oblique")
     .fillColor("#1C2833")
     .text("Ciudad de Guatemala", 50, 800, { align: "center" })
-    .image("./src/GenerarPDF/images/LLS KINAL.png", 490, 770, { width: 70, align: "right"})
+    .image("./src/generarPDF/images/LLS KINAL.png", 490, 770, { width: 70, align: "right"})
 
 }
 
