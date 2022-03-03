@@ -1,6 +1,6 @@
 {
-  "name": "Laboratorio_Control_Empresas",
-  "version": "1.0.0",
+  "name": "laboratorio_control_empresas",
+  "version": "1.3.0",
   "description": "Control_De_Empresas - 2017096",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,14 @@
     "mongoose": "^6.1.8",
     "nodemon": "^2.0.15",
     "pdfkit": "^0.13.0",
-    "pdfmake": "^0.2.4",
     "save": "^2.4.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agarcia2017096/2022_IN6BM_Control_De_Empresas_2017096.git"
+  },
+  "bugs": {
+    "url": "https://github.com/agarcia2017096/2022_IN6BM_Control_De_Empresas_2017096/issues"
+  },
+  "homepage": "https://github.com/agarcia2017096/2022_IN6BM_Control_De_Empresas_2017096#readme"
 }

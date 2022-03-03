@@ -141,7 +141,6 @@ function encabezadoTabla ( doc, empleados) {
     
           separadorRegistros(doc, position + 30);
         }
-
 }
 
 function generateFooter(doc) {
