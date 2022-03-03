@@ -88,7 +88,7 @@ function informacionEmpresa(doc, empresa) {
       .font("Helvetica")
       .text(element.nombreEmpresa, 190, 200)
       .font("Helvetica-Bold")
-      .text("Actividad Economica:", 70, 220)
+      .text("Actividad económica:", 70, 220)
       .font("Helvetica")
       .text(element.actividadEconomica, 190, 220)
       .font("Helvetica-Bold")
@@ -124,6 +124,22 @@ function encabezadoTabla ( doc, empleados) {
        .fontSize(10)
        .fillColor("black");
 
+       if(empleados.length == 0){
+
+        for (i = 0; i < 1; i++) {
+          const position = invoiceTableTop + (i + 1) * 30;
+          filaRegistro(
+            doc,
+            position,
+            "*NOTA: No existen empleados en la empresa",
+            "",
+            "",
+            ""
+          );
+    
+          separadorRegistros(doc, position + 30);
+        } 
+      }else{
         for (i = 0; i < empleados.length; i++) {
           const item = empleados[i];
           const position = invoiceTableTop + (i + 1) * 50;
@@ -141,6 +157,7 @@ function encabezadoTabla ( doc, empleados) {
     
           separadorRegistros(doc, position + 30);
         }
+        }  
 }
 
 function generateFooter(doc) {
